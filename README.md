@@ -22,7 +22,7 @@
 
 ## What it is
 
-`rs_bridge` is a single compatibility layer that lets your FiveM resources work on QBCore, Qbox, ESX Legacy, old ESX, or standalone with **zero code changes** in the resource that uses the bridge. You write `exports.rs_bridge:AddItem(src, 'water', 1)` once -- the bridge figures out whether to call `ox_inventory`, `qs-inventory`, `codem-inventory`, `xPlayer.addInventoryItem`, or whatever the server actually runs.
+`rs_bridge` is a single compatibility layer that lets your FiveM resources work on QBCore, Qbox, ESX Legacy, old ESX, or standalone with **zero code changes** in the resource that uses the bridge.
 
 Same idea for notifications, progress bars, target zones, callbacks, fuel systems, and language strings.
 
@@ -93,7 +93,7 @@ ensure your_resource
 
 ### About ox_lib
 
-`ox_lib` is listed as a dependency in `fxmanifest.lua`. It is strongly recommended -- the bridge uses it for the best notification and progress experience, plus callbacks. If you genuinely want zero ox_lib on your server, remove the `@ox_lib/init.lua` line from `shared_scripts` and the `dependency 'ox_lib'` line from `fxmanifest.lua`. All ox_lib code paths will safely fall through to framework-native or chat fallbacks.
+`ox_lib` is listed as a dependency in `fxmanifest.lua`. It is strongly recommended -- the bridge uses it for the best notification and progress experience, plus callbacks. If you genuinely want zero external deps (not recommended), you can comment out the dependency line in fxmanifest and the bridge will fall back to chat notifications and events.
 
 ---
 
@@ -370,12 +370,18 @@ Keep framework specifics inside the bridge. That is the entire point.
 
 ## Defensive design
 
-Every adapter call is wrapped in `pcall` via `RSBridge.safeCall`. If an inventory's export name changes between versions, or a fuel resource isn't quite the shape we expected, the bridge logs a debug message and tries the next adapter or the framework fallback. The worst case is a chat-message notification or a `Wait(duration)` timer-only progress bar -- nothing hard-crashes.
+Every adapter call is wrapped in `pcall` via `RSBridge.safeCall`. If an inventory's export name changes between versions, or a fuel resource isn't quite the shape we expected, the bridge logs a debug line and falls back gracefully.
 
-If you find a third-party version where a specific export name has drifted, open an issue or a PR with the version and the export signature. Small patches in `server/inventory.lua`, `client/progress.lua`, or `client/fuel.lua` are usually enough.
+If you find a third-party version where a specific export name has drifted, open an issue or a PR with the version and the export signature. Small patches in `server/inventory.lua`, `client/progress.lua`, etc. are welcome.
 
 ---
 
 ## Credits
 
 Built by Reality Sucks RP. Free to use, modify, and redistribute. Keep the credit lines in the file headers and we're square.
+
+---
+
+## Support This Project
+
+<a href='https://ko-fi.com/R6R51XYJ6N' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://storage.ko-fi.com/cdn/kofi2.png?v=6' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
