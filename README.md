@@ -18,7 +18,7 @@
   <a href="#recommended-pattern">Pattern</a>
 </p>
 
----
+CHECK OUT MY TEBEX STORE: https://reality-sucks-rp-webstore.tebex.io/
 
 ## What it is
 
