@@ -8,4 +8,8 @@ return {
     no_target_resource = "No target resource detected",
     no_fuel_resource = "No fuel resource detected",
     no_progress_resource = "No progress resource detected",
+    minigame_no_resource = "No minigame resource detected",
+    medical_revived = 'You have been revived.',
+    medical_healed = 'You have been healed.',
+    medical_no_resource = 'No medical resource detected, using native fallback',
 }
