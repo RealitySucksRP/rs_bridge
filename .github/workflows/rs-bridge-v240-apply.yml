@@ -1,0 +1,44 @@
+name: RS Bridge v2.4.0 staged apply
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  apply-v240:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout update branch
+        uses: actions/checkout@v4
+        with:
+          ref: update-v2.4.0
+          fetch-depth: 0
+
+      - name: Reconstruct and verify exact v2.4.0 source archive
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat .rs-update/chunk-01.txt .rs-update/chunk-02.txt .rs-update/chunk-03.txt .rs-update/chunk-04.txt .rs-update/chunk-05.txt .rs-update/chunk-06.txt .rs-update/chunk-07.txt .rs-update/chunk-08.txt > /tmp/rsbridge-v240.b64
+          base64 --decode /tmp/rsbridge-v240.b64 > /tmp/rsbridge-v240.tgz
+          echo "bd0d9724deb5ac8b7819366ddf99ee1d1c81beda00d8a16abeb2d56cf9a9f53b  /tmp/rsbridge-v240.tgz" | sha256sum --check --strict
+          tar -xzf /tmp/rsbridge-v240.tgz -C .
+          grep -Fq "version '2.4.0'" fxmanifest.lua
+          rm -rf .rs-update
+
+      - name: Commit clean v2.4.0 tree
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "RealitySucksRP Update Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "rs_bridge already matches v2.4.0."
+            exit 0
+          fi
+          git commit -m "Update rs_bridge to v2.4.0"
+          git push origin HEAD:update-v2.4.0
