@@ -1,14 +1,30 @@
+-- Every fuel resource the bridge can drive. This order is the GENERIC fallback;
+-- the framework-specific preference below is consulted first.
 local FuelResources = {
     'LegacyFuel',
     'lj-fuel',
     'ps-fuel',
     'cdn-fuel',
     'ox_fuel',
+    'qb-fuel',
     'ti_fuel',
     'BigDaddy-Fuel',
     'x-fuel',
     'lc_fuel',
     'okokGasStation'
+}
+
+-- Provider preference by framework.
+--
+-- Picking purely by "first started" was wrong on Qbox: the official Qbox recipe
+-- provisions ox_fuel, but LegacyFuel sat first in the generic list, so a server
+-- running both resolved to LegacyFuel. QBCore's own qb-fuel was not listed at
+-- all. Anything not named here still resolves through the generic list, so an
+-- unusual fuel script keeps working.
+local FuelPreference = {
+    qbox   = { 'ox_fuel', 'lc_fuel', 'LegacyFuel' },
+    qbcore = { 'qb-fuel', 'LegacyFuel', 'lj-fuel', 'ps-fuel', 'cdn-fuel', 'ox_fuel' },
+    esx    = { 'ox_fuel', 'LegacyFuel', 'lj-fuel', 'cdn-fuel' },
 }
 
 local cachedFuelProvider = nil
@@ -19,6 +35,15 @@ local function resolveFuelProvider()
 
     if cachedFuelProvider and (cachedFuelProvider == 'native' or RSBridge.resourceStarted(cachedFuelProvider)) then
         return cachedFuelProvider
+    end
+
+    local preferred = FuelPreference[RSBridge.Framework]
+    if preferred then
+        local pick = RSBridge.firstStarted(preferred)
+        if pick then
+            cachedFuelProvider = pick
+            return cachedFuelProvider
+        end
     end
 
     cachedFuelProvider = RSBridge.firstStarted(FuelResources) or 'native'
@@ -76,9 +101,10 @@ function GetFuel(vehicle)
         if ok and result then return tonumber(result) or 0.0 end
     end
 
+    -- lc_fuel exports are lower-camel: getFuel / setFuel.
     if provider == 'lc_fuel' then
         local ok, result = RSBridge.safeCall(function()
-            return exports['lc_fuel']:GetFuel(vehicle)
+            return exports['lc_fuel']:getFuel(vehicle)
         end)
         if ok and result then return tonumber(result) or 0.0 end
     end
@@ -142,7 +168,7 @@ function SetFuel(vehicle, level)
 
     if provider == 'lc_fuel' then
         local ok = RSBridge.safeCall(function()
-            exports['lc_fuel']:SetFuel(vehicle, level)
+            exports['lc_fuel']:setFuel(vehicle, level)
         end)
         if ok then return true end
     end
