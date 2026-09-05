@@ -25,15 +25,13 @@ local function runQBProgress(data)
     return finished
 end
 
-function ProgressBar(data)
-    data = data or {}
-    data.label = data.label or data.text or _L('progress_default')
-    data.duration = tonumber(data.duration or data.time) or 1000
-    if data.canCancel == nil then data.canCancel = true end
+-- Each entry returns nil when its provider is unavailable, so the caller can
+-- keep walking the chain. Order is the 'auto' preference order.
+local providerOrder = { 'progressbar', 'ox_lib', 'mythic_progbar', 'rprogress', 'rs_progressbar' }
 
-    local provider = RSBridgeConfig.Progress.Provider or 'auto'
-
-    if (provider == 'auto' or provider == 'ox_lib') and lib and lib.progressBar then
+local function runProvider(name, data)
+    if name == 'ox_lib' then
+        if not (lib and lib.progressBar) then return nil end
         return lib.progressBar({
             duration = data.duration,
             label = data.label,
@@ -49,12 +47,12 @@ function ProgressBar(data)
         })
     end
 
-    if provider == 'auto' or provider == 'progressbar' then
-        local result = runQBProgress(data)
-        if result ~= nil then return result end
+    if name == 'progressbar' then
+        return runQBProgress(data)
     end
 
-    if (provider == 'auto' or provider == 'mythic_progbar') and RSBridge.resourceStarted('mythic_progbar') then
+    if name == 'mythic_progbar' then
+        if not RSBridge.resourceStarted('mythic_progbar') then return nil end
         local finished = nil
         exports['mythic_progbar']:Progress({
             name = data.name or 'rs_bridge',
@@ -70,7 +68,8 @@ function ProgressBar(data)
         return finished
     end
 
-    if (provider == 'auto' or provider == 'rprogress') and RSBridge.resourceStarted('rprogress') then
+    if name == 'rprogress' then
+        if not RSBridge.resourceStarted('rprogress') then return nil end
         local finished = nil
         exports.rprogress:Custom({
             Duration = data.duration,
@@ -84,11 +83,43 @@ function ProgressBar(data)
         return finished
     end
 
-    if (provider == 'auto' or provider == 'rs_progressbar') and RSBridge.resourceStarted('rs_progressbar') then
+    if name == 'rs_progressbar' then
+        if not RSBridge.resourceStarted('rs_progressbar') then return nil end
         local ok, result = RSBridge.safeCall(function()
             return exports.rs_progressbar:ProgressBar(data)
         end)
         if ok then return result end
+        return nil
+    end
+
+    return nil
+end
+
+function ProgressBar(data)
+    data = data or {}
+    data.label = data.label or data.text or _L('progress_default')
+    data.duration = tonumber(data.duration or data.time) or 1000
+    if data.canCancel == nil then data.canCancel = true end
+
+    local provider = RSBridgeConfig.Progress.Provider or 'auto'
+
+    -- An explicitly configured provider is preferred, but never a dead end:
+    -- if it is not installed, fall through the rest rather than dropping to a
+    -- blind Wait() with no visible bar. A customer who configures a provider
+    -- they later remove still sees *a* progress bar.
+    if provider ~= 'auto' and provider ~= 'none' then
+        local result = runProvider(provider, data)
+        if result ~= nil then return result end
+        RSBridge.debug(('Progress provider "%s" unavailable, falling back'):format(provider))
+    end
+
+    if provider ~= 'none' then
+        for _, name in ipairs(providerOrder) do
+            if name ~= provider then
+                local result = runProvider(name, data)
+                if result ~= nil then return result end
+            end
+        end
     end
 
     Wait(data.duration)
