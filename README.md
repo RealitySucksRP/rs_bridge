@@ -1,3 +1,11 @@
+<p align="center">
+  <a href="https://reality-sucks-rp-webstore.tebex.io/package/7449324"><img src="https://img.shields.io/badge/GET%20RS%20BRIDGE-FREE%20ON%20TEBEX-ff6a00?style=for-the-badge" alt="Get RS Bridge free on Tebex"></a>
+  <a href="https://reality-sucks-rp-webstore.tebex.io/"><img src="https://img.shields.io/badge/BROWSE-REALITYSUCKSRP%20STORE-111111?style=for-the-badge" alt="Browse RealitySucksRP Tebex Store"></a>
+  <a href="https://discord.gg/e9V3rPHySx"><img src="https://img.shields.io/badge/JOIN-DISCORD-5865F2?style=for-the-badge" alt="Join RealitySucksRP Discord"></a>
+</p>
+
+> I build my own FiveM scripts and complete server setups: shops, weapons, phones, racing, customs, garages, dealerships, zombie apocalypse systems, warfare, Phantom encounters, UI and more. `rs_bridge` is the free compatibility layer behind many of those systems.
+
 # rs_bridge v2.4.0
 
 Universal bridge for Reality Sucks RP resources.
