@@ -1,6 +1,7 @@
 <p align="center">
   <a href="https://reality-sucks-rp-webstore.tebex.io/package/7449324"><img src="https://img.shields.io/badge/GET%20RS%20BRIDGE-FREE%20ON%20TEBEX-ff6a00?style=for-the-badge" alt="Get RS Bridge free on Tebex"></a>
   <a href="https://reality-sucks-rp-webstore.tebex.io/"><img src="https://img.shields.io/badge/BROWSE-REALITYSUCKSRP%20STORE-111111?style=for-the-badge" alt="Browse RealitySucksRP Tebex Store"></a>
+  <a href="https://realitysucksrp.github.io/"><img src="https://img.shields.io/badge/VISIT-WEBSITE-0f6fff?style=for-the-badge" alt="Visit RealitySucksRP website"></a>
   <a href="https://discord.gg/e9V3rPHySx"><img src="https://img.shields.io/badge/JOIN-DISCORD-5865F2?style=for-the-badge" alt="Join RealitySucksRP Discord"></a>
 </p>
 
@@ -35,7 +36,6 @@ Auto-detects or can be forced in `config.lua`.
 - `core_inventory`
 - `origen_inventory`
 - framework inventory fallback
-
 
 ### Client medical
 
@@ -79,7 +79,6 @@ local down = exports.rs_bridge:IsPlayerDown()
 - `rprogress`
 - `rs_progressbar`
 - timer fallback
-
 
 ### Medical / ambulance
 
@@ -292,7 +291,6 @@ if exports.rs_bridge:HasGroup(src, {'admin', 'god'}, 0) then
 end
 ```
 
-
 ### Medical
 
 ```lua
@@ -331,7 +329,6 @@ local success = exports.rs_bridge:ProgressBar({
     disableCombat = true
 })
 ```
-
 
 ### Client medical
 
@@ -422,7 +419,6 @@ Keep those inside the bridge.
 
 This bridge is defensive and fail-soft. Some third-party inventories and fuel scripts use different export names depending on version. The bridge tries common exports first and falls back when possible. Community testing may require small adapter patches for specific versions.
 
-
 ## Banking and cash providers (v2.2.2)
 
 Physical cash and bank money are separate providers.
@@ -434,7 +430,22 @@ Physical cash and bank money are separate providers.
 Banking server exports: `GetCashProvider`, `GetCash`, `CanReceiveCash`, `AddCash`, `RemoveCash`, `GetBankingProvider`, `GetBankBalance`, `AddBankMoney`, `RemoveBankMoney`, `ChargePlayer`, and `CreditPlayer`.
 
 `client/core.lua`, `client/uiguard.lua`, and `server/core.lua` are explicitly packaged for resources using `@rs_bridge/...` compatibility includes.
+
+## Complete FiveM Servers For Sale
+
+I love making scripts and running wild in GTA, but I also enjoy building complete servers. I use tested RealitySucksRP systems and configure the build around the owner's gameplay, framework, economy, theme and direction.
+
+- **QBCore Shell — $500**
+- **Zombie Server — $700**
+- **Full RP Server — $850**
+- **30 days of Discord setup/support included**
+
+**Website:** https://realitysucksrp.github.io/
+
+**Tebex:** https://reality-sucks-rp-webstore.tebex.io/
+
+**Discord:** https://discord.gg/e9V3rPHySx
+
 ## License
 
 MIT License. See `LICENSE` for the full terms.
-
