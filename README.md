@@ -9,9 +9,9 @@
   <a href="https://discord.gg/e9V3rPHySx"><img src="https://img.shields.io/badge/DISCORD-JOIN-5865F2?style=for-the-badge" alt="RealitySucksRP Discord"></a>
 </p>
 
-Tebex Store: https://reality-sucks-rp-webstore.tebex.io/
-Discord: discord.gg/e9V3rPHySx
-Youtube: https://www.youtube.com/@RealitySucksRP
+Tebex Store: https://reality-sucks-rp-webstore.tebex.io/</p>
+Discord: discord.gg/e9V3rPHySx</p>
+Youtube: https://www.youtube.com/@RealitySucksRP</p>
 
 # RS Bridge v2.6.0
 
