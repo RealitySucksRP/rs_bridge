@@ -10,7 +10,7 @@
 </p>
 
 Tebex Store: https://reality-sucks-rp-webstore.tebex.io/</p>
-Discord: discord.gg/e9V3rPHySx</p>
+Discord: https://discord.gg/e9V3rPHySx</p>
 Youtube: https://www.youtube.com/@RealitySucksRP</p>
 
 # RS Bridge v2.6.0
