@@ -65,13 +65,12 @@ RSBridgeConfig.Target = {
 RSBridgeConfig.Progress = {
     -- auto, ox_lib, progressbar, mythic_progbar, rprogress, rs_progressbar, none
     --
-    -- Set to 'progressbar' for the RS Pip-Boi bar. On 'auto' the RS bar is
-    -- preferred when installed and ox_lib is used otherwise, so 'auto' is a
-    -- safe choice too; naming it explicitly just makes the intent obvious.
+    -- 'auto' selects the first supported started provider. Force a provider only
+    -- when a server owner intentionally wants to override detection.
     --
     -- A configured provider that turns out to be missing falls through to the
     -- others rather than silently running with no bar at all.
-    Provider = 'progressbar'
+    Provider = 'auto'
 }
 
 RSBridgeConfig.Minigame = {
@@ -178,14 +177,36 @@ RSBridgeConfig.Cash = {
     -- when you know cash is an item on your inventory.
     -- ---------------------------------------------------------------------
     Provider = 'auto',
-    -- 'money', NOT 'cash'. With ox_inventory + Qbox the `money` item IS the cash
-    -- account -- ox syncs the item count to the balance both ways. Pointing at a
-    -- separate `cash` item created a second wallet that nothing else could see:
-    -- the HUD showed the account while rs-banking's ATM read the `cash` item and
-    -- reported "Not enough physical cash" against a multi-million balance.
+    -- Used only when Provider = 'inventory_item'. 'money' is common on Qbox +
+    -- ox_inventory, but servers using a different physical-cash item can override it.
     Item = 'money'
 }
 
+-- ============================================================
+-- HUD
+-- ============================================================
+-- Lets a resource hide your HUD while it opens a full-screen UI, and show it
+-- again afterwards, without knowing which HUD you run.
+--
+--     exports.rs_bridge:SetHudVisible(false)
+--
+-- Nothing here can throw: if the HUD cannot be reached that is cosmetic, and
+-- it must never stop the resource that asked from opening.
+RSBridgeConfig.Hud = {
+    -- auto, none, or any provider name from the registry in client/hud.lua
+    Provider = 'auto',
+
+    -- Escape hatch for a HUD the registry does not know, including your own.
+    --
+    -- An export taking one boolean:
+    --   Custom = { resource = 'my-hud', export = 'SetHudVisible' }
+    --
+    -- Or an event, for a HUD that exposes no export:
+    --   Custom = { event = 'my-hud:client:toggle' }
+    --
+    -- Both receive a single boolean: true = show, false = hide.
+    Custom = nil
+}
 RSBridgeConfig.Banking = {
     -- auto prefers rs-banking when started, otherwise framework bank money.
     Provider = 'auto'

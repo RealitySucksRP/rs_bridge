@@ -133,9 +133,7 @@ local function runCustom(intent, opts)
     if type(custom.resource) ~= 'string' or type(custom.export) ~= 'string' then return nil end
     if not RSBridge.resourceStarted(custom.resource) then return nil end
 
-    local ok, result = RSBridge.safeCall(function()
-        return exports[custom.resource][custom.export](exports[custom.resource], intent, opts)
-    end)
+    local ok, result = RSBridge.callExport(custom.resource, custom.export, intent, opts)
     if not ok then return nil end
 
     return result == true

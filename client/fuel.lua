@@ -31,7 +31,11 @@ local cachedFuelProvider = nil
 
 local function resolveFuelProvider()
     local forced = RSBridgeConfig.Fuel.Provider or 'auto'
-    if forced ~= 'auto' then return forced end
+    if forced ~= 'auto' then
+        if forced == 'native' then return 'native' end
+        if RSBridge.resourceStarted(forced) then return forced end
+        RSBridge.debug(('Fuel provider "%s" is not started; falling back to auto detection'):format(tostring(forced)))
+    end
 
     if cachedFuelProvider and (cachedFuelProvider == 'native' or RSBridge.resourceStarted(cachedFuelProvider)) then
         return cachedFuelProvider
@@ -51,6 +55,12 @@ local function resolveFuelProvider()
 end
 
 AddEventHandler('onResourceStart', function(resource)
+    for _, name in ipairs(FuelResources) do
+        if resource == name then cachedFuelProvider = nil return end
+    end
+end)
+
+AddEventHandler('onResourceStop', function(resource)
     for _, name in ipairs(FuelResources) do
         if resource == name then cachedFuelProvider = nil return end
     end

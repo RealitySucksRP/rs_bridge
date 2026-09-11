@@ -1,5 +1,3 @@
-local cachedProvider
-
 local function resolveCashProvider()
     local configured = (RSBridgeConfig.Cash and RSBridgeConfig.Cash.Provider) or 'auto'
     if configured ~= 'auto' then return configured end
@@ -16,8 +14,9 @@ local function cashItemName()
 end
 
 function GetCashProvider()
-    cachedProvider = cachedProvider or resolveCashProvider()
-    return cachedProvider
+    -- Framework detection is asynchronous at bridge startup; re-resolve so an
+    -- early call cannot cache 'none' for the entire server session.
+    return resolveCashProvider()
 end
 
 function GetCash(src)

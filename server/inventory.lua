@@ -12,7 +12,11 @@ local inventoryOrder = {
 
 local function resolveInventoryProvider()
     local forced = RSBridgeConfig.Inventory.Provider or 'auto'
-    if forced ~= 'auto' then return forced end
+    if forced ~= 'auto' then
+        if forced == 'framework' then return 'framework' end
+        if RSBridge.resourceStarted(forced) then return forced end
+        RSBridge.debug(('Inventory provider "%s" is not started; falling back to auto detection'):format(tostring(forced)))
+    end
 
     for _, provider in ipairs(inventoryOrder) do
         if provider == 'framework' or RSBridge.resourceStarted(provider) then
@@ -90,7 +94,7 @@ Adapters['ox_inventory'] = {
         return exports.ox_inventory:GetItem(src, item, nil, false)
     end,
     GetItemCount = function(src, item)
-        return exports.ox_inventory:Search(src, 'count', item) or 0
+        return exports.ox_inventory:GetItemCount(src, item, nil, false) or 0
     end,
     CanCarryItem = function(src, item, amount, metadata)
         return exports.ox_inventory:CanCarryItem(src, item, amount, metadata)
@@ -182,8 +186,15 @@ local function callAdapter(method, ...)
     local ok, result = RSBridge.safeCall(fn, ...)
     if ok then return result end
 
-    if method == 'AddItem' then return frameworkAdd(...) end
-    if method == 'RemoveItem' then return frameworkRemove(...) end
+    -- Never retry a MUTATION through a second provider after the selected export
+    -- throws. The first provider may have completed the write before throwing;
+    -- retrying through the framework can duplicate an item or remove it twice.
+    if method == 'AddItem' or method == 'RemoveItem' then
+        RSBridge.debug(('%s failed in inventory provider %s; refusing cross-provider retry'):format(method, tostring(provider)))
+        return false
+    end
+
+    -- Read-only queries may safely fall back.
     if method == 'GetItem' then return frameworkGetItem(...) end
     return nil
 end

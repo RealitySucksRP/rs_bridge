@@ -1,12 +1,20 @@
+# rs_bridge changelog
+
+## 2.6.0 — public-server hardening
+
+- Public defaults are now portable: Debug=false, Progress=auto, Cash=auto.
+- Dynamic export dispatch is centralized through `RSBridge.callExport`, fixing argument shifting for custom HUD/minigame exports.
+- Forced inventory/target/fuel/keys/banking providers that are not running now warn and safely fall back to auto detection.
+- Inventory mutations fail closed after a provider exception instead of retrying through a second provider and risking a duplicate add/remove.
+- ox_inventory item counts now use its documented `GetItemCount` server export.
+- Cash provider no longer caches a pre-framework `none` result during asynchronous startup.
+- Fuel provider resolution is identical on client/server and includes QBCore `qb-fuel`.
+- Provider caches invalidate on resource stop as well as resource start.
+- Progress callback providers are bounded by duration + timeout padding instead of being able to hang a gameplay thread forever.
+- Added `GetProgressProvider`, server `GetProviderSummary`, `/rsbridgecheck`, and client `/rsbridgeclient`.
+- README rewritten around one universal runtime-detected build and explicit server-owner installation rules.
+
 # rs_bridge Changelog
-
-## 2.4.0 - Version negotiation and centralized auditing
-
-- Adds `GetVersion()` and `RequireVersion()` on client and server.
-- Adds declarative `rs_bridge_version` checks for started resources.
-- Adds centralized audit/webhook routing with blank-by-default endpoints and server.cfg convar support.
-- Keeps webhook delivery best-effort so logging failures do not interrupt gameplay operations.
-- Expands compatibility exports used by current RS resources.
 
 ## 2.3.0 - Shared stalker threat model
 
@@ -45,7 +53,7 @@
 
 ## 2.2.2 - Full banking + compatibility merge
 
-- Consolidates the banking and provider updates into the current bridge baseline.
+- Rebased on the latest uploaded rs_bridge instead of the older banking-patch snapshot.
 - Adds configurable physical-cash and banking providers.
 - Adds `server/cash.lua` and `server/banking.lua`.
 - Adds cash, bank-balance, charge, and credit server exports for `rs-banking` integration.
