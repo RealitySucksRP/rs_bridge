@@ -679,6 +679,23 @@ function GetGangs()
     return registryFor(function() return exports.qbx_core:GetGangs() end, 'Gangs')
 end
 
+function GetProviderSummary()
+    local schema = GetVehicleSchema and GetVehicleSchema() or nil
+    return {
+        framework = RSBridge.Framework,
+        inventory = GetInventoryProvider and GetInventoryProvider() or 'unknown',
+        cash = GetCashProvider and GetCashProvider() or 'unknown',
+        banking = GetBankingProvider and GetBankingProvider() or 'unknown',
+        fuel = GetFuelProvider and GetFuelProvider() or 'unknown',
+        keys = GetVehicleKeysProvider and GetVehicleKeysProvider() or 'none',
+        vehicleTable = schema and schema.table or nil,
+        vehicleIdentifier = schema and schema.identifier or nil,
+        vehiclePlate = schema and schema.plate or nil,
+    }
+end
+
+exports('GetProviderSummary', GetProviderSummary)
+
 -- Startup diagnostics. A missing optional provider must read as a clear
 -- message, never as a nil index later in a gameplay call.
 CreateThread(function()
@@ -686,6 +703,10 @@ CreateThread(function()
 
     local framework = RSBridge.Framework
     print(('[rs_bridge] framework: %s'):format(framework))
+    local providerSummary = GetProviderSummary()
+    print(('[rs_bridge] providers: inventory=%s | cash=%s | banking=%s | fuel=%s | keys=%s')
+        :format(tostring(providerSummary.inventory), tostring(providerSummary.cash), tostring(providerSummary.banking),
+            tostring(providerSummary.fuel), tostring(providerSummary.keys)))
 
     -- qbx_core's qb-core compatibility shim is convar-gated (qbx:enableBridge,
     -- default true). Any resource still reaching for exports['qb-core'] works
@@ -720,6 +741,15 @@ CreateThread(function()
         print(('[rs_bridge] vehicle ownership: %s (%s / %s)'):format(schema.table, schema.identifier, schema.plate))
     end
 end)
+
+
+RegisterCommand('rsbridgecheck', function(source)
+    if source ~= 0 and not HasPermission(source, 'admin') then return end
+    local p = GetProviderSummary()
+    print(('[rs_bridge] CHECK framework=%s inventory=%s cash=%s banking=%s fuel=%s keys=%s vehicles=%s(%s/%s)')
+        :format(tostring(p.framework), tostring(p.inventory), tostring(p.cash), tostring(p.banking), tostring(p.fuel),
+            tostring(p.keys), tostring(p.vehicleTable), tostring(p.vehicleIdentifier), tostring(p.vehiclePlate)))
+end, false)
 
 exports('GetPlayer', GetPlayer)
 exports('GetPlayerData', GetPlayerData)

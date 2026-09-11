@@ -3,7 +3,11 @@ local cachedProvider = nil
 
 local function getTargetProvider()
     local forced = RSBridgeConfig.Target.Provider or 'auto'
-    if forced ~= 'auto' then return forced end
+    if forced ~= 'auto' then
+        if forced == 'none' then return 'none' end
+        if RSBridge.resourceStarted(forced) then return forced end
+        RSBridge.debug(('Target provider "%s" is not started; falling back to auto detection'):format(tostring(forced)))
+    end
 
     if cachedProvider and (cachedProvider == 'none' or RSBridge.resourceStarted(cachedProvider)) then
         return cachedProvider
@@ -14,6 +18,12 @@ local function getTargetProvider()
 end
 
 AddEventHandler('onResourceStart', function(resource)
+    if resource == 'ox_target' or resource == 'qb-target' or resource == 'qtarget' or resource == 'bt-target' then
+        cachedProvider = nil
+    end
+end)
+
+AddEventHandler('onResourceStop', function(resource)
     if resource == 'ox_target' or resource == 'qb-target' or resource == 'qtarget' or resource == 'bt-target' then
         cachedProvider = nil
     end

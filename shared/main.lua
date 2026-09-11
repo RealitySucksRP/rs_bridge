@@ -82,6 +82,18 @@ AddEventHandler('onResourceStart', function(resource)
     end
 end)
 
+
+AddEventHandler('onResourceStop', function(resource)
+    if resource == 'qbx_core' or resource == 'qb-core' or resource == 'es_extended' then
+        -- Do not leave a stale core object/provider identity after the framework is
+        -- stopped or restarted during development. The matching onResourceStart
+        -- handler will resolve the framework again when it returns.
+        detectFramework()
+        RSBridge.Ready = true
+        RSBridge.debug(('Framework refreshed after stop: %s'):format(RSBridge.Framework))
+    end
+end)
+
 function GetFramework()
     return RSBridge.Framework
 end

@@ -14,7 +14,11 @@ local cachedKeysProvider = nil
 
 local function resolveKeysProvider()
     local forced = RSBridgeConfig.Vehicles and RSBridgeConfig.Vehicles.KeysProvider or 'auto'
-    if forced ~= 'auto' then return forced end
+    if forced ~= 'auto' then
+        if forced == 'none' then return 'none' end
+        if RSBridge.resourceStarted(forced) then return forced end
+        RSBridge.debug(('Vehicle keys provider "%s" is not started; falling back to auto detection'):format(tostring(forced)))
+    end
 
     if cachedKeysProvider and (cachedKeysProvider == 'none' or RSBridge.resourceStarted(cachedKeysProvider)) then
         return cachedKeysProvider
@@ -25,6 +29,12 @@ local function resolveKeysProvider()
 end
 
 AddEventHandler('onResourceStart', function(resource)
+    for _, name in ipairs(keysOrder) do
+        if resource == name then cachedKeysProvider = nil return end
+    end
+end)
+
+AddEventHandler('onResourceStop', function(resource)
     for _, name in ipairs(keysOrder) do
         if resource == name then cachedKeysProvider = nil return end
     end
