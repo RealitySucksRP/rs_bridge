@@ -1,6 +1,10 @@
 local function resolveBankingProvider()
     local configured = (RSBridgeConfig.Banking and RSBridgeConfig.Banking.Provider) or 'auto'
-    if configured ~= 'auto' then return configured end
+    if configured ~= 'auto' then
+        if configured == 'framework' then return 'framework' end
+        if configured == 'rs-banking' and RSBridge.resourceStarted('rs-banking') then return 'rs-banking' end
+        RSBridge.debug(('Banking provider "%s" is unavailable; falling back to auto detection'):format(tostring(configured)))
+    end
     return RSBridge.resourceStarted('rs-banking') and 'rs-banking' or 'framework'
 end
 

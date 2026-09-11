@@ -1,11 +1,9 @@
 fx_version 'cerulean'
 game 'gta5'
-lua54 'yes'
-
 name 'rs_bridge'
 author 'Reality Sucks RP'
 description 'Universal bridge for QBCore, Qbox, ESX, standalone, inventories, fuel, progress, target, callbacks, and locales.'
-version '2.4.0'
+version '2.6.0'
 
 -- ox_lib is framework-neutral and runs on Qbox, QBCore and ESX alike.
 -- The callback, notification and progress providers all resolve through it
@@ -30,6 +28,7 @@ client_scripts {
     'client/target.lua',
     'client/fuel.lua',
     'client/medical.lua',
+    'client/hud.lua',
     'client/minigame.lua'
 }
 
@@ -85,8 +84,11 @@ exports {
     'GetItemLabel',
     'Notify',
     'ProgressBar',
+    'GetProgressProvider',
     'Minigame',
     'GetMinigameProvider',
+    'SetHudVisible',
+    'GetHudProvider',
     'AddTargetEntity',
     'AddTargetModel',
     'AddTargetZone',
@@ -118,6 +120,7 @@ server_exports {
     'ReloadWebhooks',
     'GetVersion',
     'RequireVersion',
+    'GetProviderSummary',
     'GetFramework',
     'IsQBCore',
     'IsQbox',

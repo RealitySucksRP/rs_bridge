@@ -1,3 +1,11 @@
+local function waitForProgressResult(getResult, data)
+    local duration = math.max(0, tonumber(data.duration) or 0)
+    local padding = tonumber(RSBridgeConfig.Progress and RSBridgeConfig.Progress.TimeoutPaddingMs) or 5000
+    local deadline = GetGameTimer() + duration + math.max(1000, padding)
+    while getResult() == nil and GetGameTimer() < deadline do Wait(50) end
+    return getResult()
+end
+
 local function runQBProgress(data)
     if not RSBridge.resourceStarted('progressbar') then return nil end
 
@@ -21,8 +29,7 @@ local function runQBProgress(data)
         finished = not cancelled
     end)
 
-    while finished == nil do Wait(50) end
-    return finished
+    return waitForProgressResult(function() return finished end, data)
 end
 
 -- Each entry returns nil when its provider is unavailable, so the caller can
@@ -64,8 +71,7 @@ local function runProvider(name, data)
         }, function(cancelled)
             finished = not cancelled
         end)
-        while finished == nil do Wait(50) end
-        return finished
+        return waitForProgressResult(function() return finished end, data)
     end
 
     if name == 'rprogress' then
@@ -79,8 +85,7 @@ local function runProvider(name, data)
                 finished = not cancelled
             end
         })
-        while finished == nil do Wait(50) end
-        return finished
+        return waitForProgressResult(function() return finished end, data)
     end
 
     if name == 'rs_progressbar' then
@@ -93,6 +98,18 @@ local function runProvider(name, data)
     end
 
     return nil
+end
+
+function GetProgressProvider()
+    local provider = RSBridgeConfig.Progress.Provider or 'auto'
+    if provider == 'none' then return 'none' end
+    local function available(name)
+        if name == 'ox_lib' then return lib ~= nil and lib.progressBar ~= nil end
+        return RSBridge.resourceStarted(name)
+    end
+    if provider ~= 'auto' and available(provider) then return provider end
+    for _, name in ipairs(providerOrder) do if available(name) then return name end end
+    return 'none'
 end
 
 function ProgressBar(data)
@@ -127,3 +144,4 @@ function ProgressBar(data)
 end
 
 exports('ProgressBar', ProgressBar)
+exports('GetProgressProvider', GetProgressProvider)
