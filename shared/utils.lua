@@ -17,7 +17,7 @@ RSBridgeConfig = RSBridgeConfig or {}
 
 local configDefaults = {
     Framework = 'auto',
-    Debug = true,
+    Debug = false,
     Locale = 'en',
     Notify = {
         Provider = 'auto',
@@ -58,6 +58,10 @@ local configDefaults = {
         ReviveHealth = 200,
         HealHealth = 200,
         DefaultArmor = 100
+    },
+    Hud = {
+        Provider = 'auto',
+        Custom = nil
     }
 }
 
@@ -105,6 +109,30 @@ function RSBridge.safeCall(fn, ...)
     end
 
     return true, table.unpack(returns, 2, returns.n)
+end
+
+
+--- Call a dynamically named FiveM export using the proxy as `self`.
+---
+--- `exports.resource:Name(...)` works because Lua colon syntax passes the export
+--- proxy automatically. When both resource and export names are dynamic, calling
+--- `exports[resource][name](...)` drops that proxy argument and can shift every
+--- real argument left. Use this helper for all dynamic export dispatch.
+function RSBridge.callExport(resource, exportName, ...)
+    if type(resource) ~= 'string' or resource == '' or type(exportName) ~= 'string' or exportName == '' then
+        return false, 'invalid export target'
+    end
+    if not RSBridge.resourceStarted(resource) then
+        return false, ('resource %s is not started'):format(resource)
+    end
+
+    local proxy = exports[resource]
+    local fn = proxy and proxy[exportName]
+    if type(fn) ~= 'function' then
+        return false, ('export %s:%s is unavailable'):format(resource, exportName)
+    end
+
+    return RSBridge.safeCall(fn, proxy, ...)
 end
 
 function RSBridge.normalizeAmount(amount)

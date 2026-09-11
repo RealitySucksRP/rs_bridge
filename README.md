@@ -1,451 +1,199 @@
 <p align="center">
-  <a href="https://reality-sucks-rp-webstore.tebex.io/package/7449324"><img src="https://img.shields.io/badge/GET%20RS%20BRIDGE-FREE%20ON%20TEBEX-ff6a00?style=for-the-badge" alt="Get RS Bridge free on Tebex"></a>
-  <a href="https://reality-sucks-rp-webstore.tebex.io/"><img src="https://img.shields.io/badge/BROWSE-REALITYSUCKSRP%20STORE-111111?style=for-the-badge" alt="Browse RealitySucksRP Tebex Store"></a>
-  <a href="https://realitysucksrp.github.io/"><img src="https://img.shields.io/badge/VISIT-WEBSITE-0f6fff?style=for-the-badge" alt="Visit RealitySucksRP website"></a>
-  <a href="https://discord.gg/e9V3rPHySx"><img src="https://img.shields.io/badge/JOIN-DISCORD-5865F2?style=for-the-badge" alt="Join RealitySucksRP Discord"></a>
+  <img src="rs_bridge.png" alt="RS Bridge" width="900">
 </p>
 
-> I build my own FiveM scripts and complete server setups: shops, weapons, phones, racing, customs, garages, dealerships, zombie apocalypse systems, warfare, Phantom encounters, UI and more. `rs_bridge` is the free compatibility layer behind many of those systems.
+<p align="center">
+  <a href="https://reality-sucks-rp-webstore.tebex.io/package/7628375"><img src="https://img.shields.io/badge/RS%20BRIDGE-FREE%20ON%20TEBEX-00a6ff?style=for-the-badge" alt="RS Bridge free on Tebex"></a>
+  <a href="https://reality-sucks-rp-webstore.tebex.io/"><img src="https://img.shields.io/badge/REALITYSUCKSRP-STORE-111111?style=for-the-badge" alt="RealitySucksRP Store"></a>
+  <a href="https://realitysucksrp.github.io/"><img src="https://img.shields.io/badge/WEBSITE-REALITYSUCKSRP-0f6fff?style=for-the-badge" alt="RealitySucksRP Website"></a>
+  <a href="https://discord.gg/e9V3rPHySx"><img src="https://img.shields.io/badge/DISCORD-JOIN-5865F2?style=for-the-badge" alt="RealitySucksRP Discord"></a>
+</p>
 
-# rs_bridge v2.4.0
+# RS Bridge v2.6.0
 
-Universal bridge for Reality Sucks RP resources.
+**Free • Full source • No escrow**
 
-Your resources call `rs_bridge`.  
-`rs_bridge` talks to the framework, inventory, target, fuel, progress bar, and locale system.
+RS Bridge is a universal FiveM framework/provider compatibility layer for server owners and RealitySucksRP resources. It translates common gameplay needs—player data, money, inventory, fuel, keys, targets, progress, callbacks, medical state and HUD visibility—onto the server owner's installed stack.
 
-## Supported framework modes
+## One build, runtime detection
 
-- QBCore / `qb-core`
-- Qbox / `qbx_core`
-- ESX Legacy / `es_extended`
-- Old ESX shared object fallback
-- Standalone safe fallback
+Use the **same rs_bridge folder** on GTA V Legacy and GTA V Enhanced. Do not maintain separate Qbox/QBCore/ESX copies. Provider differences belong in runtime detection or `config.lua`, not forked source trees.
 
-## Supported modules
+Framework detection order on `auto` is: **Qbox → QBCore → ESX → Standalone**. Qbox is checked first because `qbx_core` can provide QB compatibility names; the bridge itself uses native Qbox exports when Qbox is detected.
 
-### Inventory
+## Requirements
 
-Auto-detects or can be forced in `config.lua`.
-
-- `ox_inventory`
-- `qs-inventory`
-- `codem-inventory`
-- `ps-inventory`
-- `tgiann-inventory`
-- `core_inventory`
-- `origen_inventory`
-- framework inventory fallback
-
-### Client medical
-
-```lua
-exports.rs_bridge:HealPlayer()
-exports.rs_bridge:RevivePlayer()
-exports.rs_bridge:SetArmor(100)
-exports.rs_bridge:SetHealth(200)
-
-local health = exports.rs_bridge:GetHealth()
-local dead = exports.rs_bridge:IsPlayerDead()
-local down = exports.rs_bridge:IsPlayerDown()
-```
-
-### Fuel
-
-- `LegacyFuel`
-- `lj-fuel`
-- `ps-fuel`
-- `cdn-fuel`
-- `ox_fuel`
-- `ti_fuel`
-- `BigDaddy-Fuel`
-- `x-fuel`
-- `lc_fuel`
-- `okokGasStation`
-- native GTA fallback
-
-### Target
-
-- `ox_target`
-- `qb-target`
-- `qtarget`
-- `bt-target`
-
-### Progress
-
+- FiveM / FXServer
 - `ox_lib`
-- `progressbar`
-- `mythic_progbar`
-- `rprogress`
-- `rs_progressbar`
-- timer fallback
+- `oxmysql`
+- Optional framework: `qbx_core`, `qb-core`, or `es_extended`
 
-### Medical / ambulance
+`Standalone` means no gameplay framework is required; it does **not** remove the bridge's `ox_lib` / `oxmysql` dependencies.
 
-- `qb-ambulancejob`
-- `qbx_medical`
-- `esx_ambulancejob`
-
-Auto medical selection is framework-aware: Qbox prefers `qbx_medical`, QBCore prefers `qb-ambulancejob`, and ESX prefers `esx_ambulancejob`. Qbox revive uses the current server-side `qbx_medical:Revive` export. Standard ESX Legacy server-owned revives also clear its persisted `users.is_dead` flag.
-- `wasabi_ambulance`
-- `ak47_ambulancejob`
-- `ars_ambulancejob`
-- native fallback
-
-Exports:
-
-```lua
-exports.rs_bridge:RevivePlayer(src)
-exports.rs_bridge:HealPlayer(src)
-exports.rs_bridge:SetArmor(src, 100)
-exports.rs_bridge:SetHealth(src, 200)
-exports.rs_bridge:KillPlayer(src)
-exports.rs_bridge:IsPlayerDead(src)
-exports.rs_bridge:IsPlayerDown(src)
-```
-
-Client exports:
-
-```lua
-exports.rs_bridge:RevivePlayer()
-exports.rs_bridge:HealPlayer()
-exports.rs_bridge:SetArmor(100)
-exports.rs_bridge:SetHealth(200)
-exports.rs_bridge:GetHealth()
-exports.rs_bridge:IsPlayerDead()
-exports.rs_bridge:IsPlayerDown()
-```
-
-### Languages
-
-Included:
-
-- English: `en`
-- Spanish: `es`
-- French: `fr`
-- Portuguese Brazil: `pt-br`
-
-Set language in `config.lua`:
-
-```lua
-RSBridgeConfig.Locale = 'en'
-```
-
-## Install
-
-Start the bridge after your framework and before your custom resources.
-
-### QBCore
+Recommended start order:
 
 ```cfg
-ensure qb-core
+ensure oxmysql
+ensure ox_lib
+ensure qbx_core        # or qb-core / es_extended, if used
 ensure rs_bridge
-ensure your_resource
+ensure your_rs_resource
 ```
 
-### Qbox
+## Safe public defaults
 
-```cfg
-ensure qbx_core
-ensure rs_bridge
-ensure your_resource
-```
-
-### ESX
-
-```cfg
-ensure es_extended
-ensure rs_bridge
-ensure your_resource
-```
-
-### Standalone
-
-```cfg
-ensure rs_bridge
-ensure your_resource
-```
-
-## Version negotiation (v2.4.0)
-
-rs_bridge is distributed as a shared dependency for RS resources. Because the
-bridge can be updated independently from the resources that use it, version
-checks help prevent mismatches between a newer resource and an older bridge.
-
-An unguarded call to an export that an older bridge does not provide can stop
-the calling thread at that line. Version negotiation turns that failure into a
-clear console message naming the resource, required version, and installed
-version.
-
-### Declare the minimum (no Lua needed)
-
-Add one line to the resource's `fxmanifest.lua`:
+For most servers, leave these on `auto`:
 
 ```lua
-rs_bridge_version '2.4.0'
+RSBridgeConfig.Framework = 'auto'
+RSBridgeConfig.Inventory.Provider = 'auto'
+RSBridgeConfig.Target.Provider = 'auto'
+RSBridgeConfig.Progress.Provider = 'auto'
+RSBridgeConfig.Fuel.Provider = 'auto'
+RSBridgeConfig.Vehicles.KeysProvider = 'auto'
+RSBridgeConfig.Cash.Provider = 'auto'
+RSBridgeConfig.Banking.Provider = 'auto'
+RSBridgeConfig.Debug = false
 ```
 
-rs_bridge reads that field from every started resource and names any it cannot
-satisfy:
+Force a provider only when your stack is intentionally ambiguous. If a forced provider is no longer running, v2.6.0 reports it and falls back to supported auto detection instead of turning a stale config line into a gameplay failure.
 
+### Cash is special
+
+`Cash.Provider = 'auto'` uses the framework cash account. This is the safest portable default. Use `inventory_item` only on a server that intentionally models physical cash as an inventory item. `Cash.Item` is consulted only in that mode.
+
+## Diagnostics
+
+Server console:
+
+```text
+rsbridgecheck
 ```
-[rs_bridge] 2.1.3 is installed, but 2 resource(s) need a newer bridge:
-    rs-zombiegunz needs >= 2.4.0
-    rs-zombielscustoms needs >= 2.4.0
-[rs_bridge] Update rs_bridge. Until then those resources will fail in ways
-that do not name the bridge.
+
+Prints framework, inventory, cash, banking, fuel, key provider and ownership schema.
+
+Client F8:
+
+```text
+rsbridgeclient
 ```
 
-It runs once ~5s after start, and again for any resource started later by hand.
+Prints framework, target, progress, minigame and HUD providers.
 
-### Check it in code
+Startup also prints the server-side provider summary. With `Debug=false`, normal operation stays quiet while actionable startup information remains visible.
+
+## Provider contract
+
+The bridge follows four rules:
+
+1. **Auto detection is deterministic.** First supported started provider in the documented priority wins.
+2. **Read failures may fall back.** A failed read can safely try another authoritative source when one exists.
+3. **Mutations fail closed.** A provider that throws during AddItem/RemoveItem or money movement is not retried through a different provider; the first provider may already have committed the write. This prevents duplicate rewards and double removals.
+4. **Missing optional providers degrade explicitly.** Cosmetic systems can no-op; authority-changing systems return failure rather than inventing success.
+
+## Server authority
+
+The bridge is an environment adapter, not a mission engine. Gameplay resources should keep mission/session truth, payout calculation, inventory requirements and ownership validation on the server. Cfx explicitly recommends validating client-triggered actions server-side.
+
+A good consumer pattern is:
 
 ```lua
-local check = exports.rs_bridge:RequireVersion('2.4.0')
+local Player = exports.rs_bridge:GetPlayer(source)
+if not Player then return end
+
+if not exports.rs_bridge:HasItem(source, 'repair_part', 1) then return end
+if not exports.rs_bridge:RemoveItem(source, 'repair_part', 1) then return end
+
+exports.rs_bridge:AddMoney(source, 'bank', 500, 'job_reward')
+```
+
+Do not send a reward amount from NUI/client and blindly credit it on the server.
+
+## Framework/player API
+
+Server exports include `GetPlayer`, `GetPlayerData`, `GetCitizenId`, `GetCharInfo`, `GetJob`, `GetGang`, `GetJobs`, `GetGangs`, `HasJob`, `HasGroup`, `HasPermission`, `GetMoney`, `AddMoney`, `RemoveMoney`, `SetMoney` and `Notify`.
+
+Client exports include `GetPlayerData`, `GetJob`, `GetGang` and `Notify`.
+
+## Inventory
+
+Supported detection includes `ox_inventory`, `qb-inventory`, `qs-inventory`, `codem-inventory`, `ps-inventory`, `tgiann-inventory`, `core_inventory`, `origen_inventory`, then framework inventory fallback.
+
+Exports: `AddItem`, `RemoveItem`, `GetItem`, `GetItemCount`, `HasItem`, `CanCarryItem`, `CreateUseableItem`, `GetInventoryProvider`.
+
+## Fuel
+
+Supported providers include `ox_fuel`, `qb-fuel`, `LegacyFuel`, `lj-fuel`, `ps-fuel`, `cdn-fuel`, `lc_fuel`, `ti_fuel`, `BigDaddy-Fuel`, `x-fuel`, `okokGasStation`, and native GTA fallback. Framework-aware preference is used before the generic list.
+
+Client:
+
+```lua
+local vehicle = GetVehiclePedIsIn(PlayerPedId(), false)
+local fuel = exports.rs_bridge:GetFuel(vehicle)
+exports.rs_bridge:SetFuel(vehicle, 75.0)
+```
+
+Always validate an entity before passing it to a fuel provider.
+
+## Vehicle keys and owned vehicles
+
+Qbox uses the documented entity-based `qbx_vehiclekeys` API when available. Vehicle ownership uses `qbx_vehicles` on Qbox; QBCore/ESX use the configured ownership schema fallback.
+
+Useful exports include `DoesPlayerOwnVehicle`, `GetOwnedVehicles`, `GetPlayerVehicle`, `GetVehicleIdByPlate`, `GiveVehicleKeys`, `RemoveVehicleKeys`, `HasVehicleKeys`, `SetVehicleLockState`, `CreateSessionId`, `DeleteVehicleSafe` and `GetVehicleClassByModel`.
+
+Network identity rule: local entity handles are not portable between client and server. Pass a network ID when a server-side consumer needs to resolve a live entity.
+
+## Target
+
+Supported: `ox_target`, `qb-target`, `qtarget`, `bt-target`. The bridge translates QB `action(entity)` and ox_target `onSelect(data)` callback shapes.
+
+Exports: `AddTargetEntity`, `AddTargetModel`, `AddTargetZone`, `AddTargetCircleZone`, `AddTargetPolyZone`, corresponding removers, and `GetTargetProvider`.
+
+## Progress and minigames
+
+Progress supports `progressbar`, `ox_lib`, `mythic_progbar`, `rprogress`, `rs_progressbar`. Callback-style bars are time-bounded so a broken provider cannot hang a gameplay flow forever.
+
+Minigames use semantic intents (`lockpick`, `hotwire`, `hack`, `generic`) and can resolve through custom provider, `qbx_vehiclekeys`, `ps-ui`, or `ox_lib` skill checks.
+
+## Callbacks
+
+`ox_lib` is the primary callback transport and preserves multiple return values. Consumer code should treat a callback as a question/response, not as authority. The server validates the requested action after the callback returns.
+
+## State bags / OneSync
+
+Use state bags for small replicated facts, not deeply nested mutable objects. Server-authored state is preferred for authority-sensitive facts. Entity state requires a valid entity and appropriate ownership/server authority.
+
+For mission entities, prefer server-created/owned entities where practical and pass network IDs across contexts. A one-time client event is not durable state for late joiners.
+
+## Medical
+
+Medical provider integration is best-effort across Qbox/QBCore/ESX/custom ambulance resources. Server accessors prefer server-visible entity/state/framework metadata before client reports. Client-reported medical state is informational fallback and must not be used as payout/security authority.
+
+## HUD
+
+`SetHudVisible(false/true)` is cosmetic and fail-soft by design. Custom HUD exports use the same safe dynamic-export dispatcher as other provider calls, so argument positions remain correct.
+
+## Version negotiation
+
+Consumer resources can declare:
+
+```lua
+rs_bridge_version '2.6.0'
+```
+
+Or call:
+
+```lua
+local check = exports.rs_bridge:RequireVersion('2.6.0')
 if not check.ok then print(check.message) end
 ```
 
-`RequireVersion` returns a **table** (`ok`, `installed`, `required`, `message`),
-not multiple values — exports flatten multiple returns inconsistently across
-builds, and a caller reading only the first value is the same class of silent
-bug this feature exists to prevent. `GetVersion()` returns the version string.
+## Legacy and Enhanced
 
-A malformed requirement never blocks: it warns and passes.
+The bridge itself should not fork simply because the GTA executable is Legacy or Enhanced. Put actual behavioral differences at the native/capability boundary inside the resource that needs them. Enhanced uses Pure Mode and continues to evolve networking/voice behavior; avoid assumptions based on old Mumble/client-owned channel patterns in new code.
 
-### What each mechanism can and cannot catch
+## Updating rs_bridge
 
-| Situation | Caught by |
-|---|---|
-| Bridge new enough, resource needs less | nothing to report |
-| Bridge new, resource needs newer | the manifest sweep, by name |
-| Bridge **old**, resource needs a newer **export** | `RequireVersion` — but only if the resource calls it, since an old bridge has no sweep |
-| Bridge **old**, resource includes a newer `@rs_bridge/...` **file** | FiveM's own script-load error, which does name the missing path |
+`config.lua` belongs to the server owner. When updating an existing customized installation, compare the new config keys before replacing it. Do not blindly overwrite a customer's provider overrides or webhook configuration.
 
-The last row is why the sweep alone is not enough, and the third row is why the
-export exists. A bridge older than this feature cannot report on itself — that
-is the gap `RequireVersion` fills from the consumer side.
-
-## Server API
-
-```lua
-local src = source
-
-local framework = exports.rs_bridge:GetFramework()
-local Player = exports.rs_bridge:GetPlayer(src)
-local PlayerData = exports.rs_bridge:GetPlayerData(src)
-local citizenid = exports.rs_bridge:GetCitizenId(src)
-local charinfo = exports.rs_bridge:GetCharInfo(src)
-local job = exports.rs_bridge:GetJob(src)
-local gang = exports.rs_bridge:GetGang(src)
-```
-
-### Money
-
-```lua
-exports.rs_bridge:AddMoney(src, 'bank', 500, 'mission_reward')
-exports.rs_bridge:RemoveMoney(src, 'cash', 50, 'shop_purchase')
-exports.rs_bridge:SetMoney(src, 'cash', 250, 'admin_set')
-
-local cash = exports.rs_bridge:GetMoney(src, 'cash')
-```
-
-ESX cash can use `cash` or `money`. ESX bank uses `bank`.
-
-### Inventory
-
-```lua
-exports.rs_bridge:AddItem(src, 'water_bottle', 1)
-exports.rs_bridge:RemoveItem(src, 'water_bottle', 1)
-
-if exports.rs_bridge:HasItem(src, 'lockpick', 1) then
-    print('Has lockpick')
-end
-
-local count = exports.rs_bridge:GetItemCount(src, 'water_bottle')
-local item = exports.rs_bridge:GetItem(src, 'water_bottle')
-```
-
-### Usable items
-
-```lua
-exports.rs_bridge:CreateUseableItem('mystery_box', function(source, item)
-    exports.rs_bridge:Notify(source, 'You opened the box.', 'success')
-end)
-```
-
-### Notifications
-
-```lua
-exports.rs_bridge:Notify(src, 'You got paid.', 'success', 5000)
-```
-
-### Jobs / groups
-
-```lua
-if exports.rs_bridge:HasJob(src, 'police', 2) then
-    print('Police grade 2+')
-end
-
-if exports.rs_bridge:HasGroup(src, {'admin', 'god'}, 0) then
-    print('Admin or god group')
-end
-```
-
-### Medical
-
-```lua
-exports.rs_bridge:RevivePlayer(src)
-exports.rs_bridge:HealPlayer(src)
-exports.rs_bridge:SetArmor(src, 100)
-exports.rs_bridge:SetHealth(src, 200)
-exports.rs_bridge:KillPlayer(src)
-
-local health = exports.rs_bridge:GetHealth(src)
-local dead = exports.rs_bridge:IsPlayerDead(src)
-local down = exports.rs_bridge:IsPlayerDown(src)
-```
-
-Server-side `GetHealth`, `IsPlayerDead`, and `IsPlayerDown` are best-effort.
-They read framework metadata first (qb-ambulancejob, qbx_medical, esx
-ambulancejob all stash isdead / inlaststand on the player) and fall back to
-a client sync that pushes state every 500ms when it changes. `GetHealth`
-defaults to 200 until the first sync arrives.
-
-## Client API
-
-### Notify
-
-```lua
-exports.rs_bridge:Notify('Hello world.', 'success', 5000)
-```
-
-### Progress
-
-```lua
-local success = exports.rs_bridge:ProgressBar({
-    label = 'Searching...',
-    duration = 5000,
-    canCancel = true,
-    disableCombat = true
-})
-```
-
-### Client medical
-
-```lua
-exports.rs_bridge:HealPlayer()
-exports.rs_bridge:RevivePlayer()
-exports.rs_bridge:SetArmor(100)
-exports.rs_bridge:SetHealth(200)
-
-local health = exports.rs_bridge:GetHealth()
-local dead = exports.rs_bridge:IsPlayerDead()
-local down = exports.rs_bridge:IsPlayerDown()
-```
-
-### Fuel
-
-```lua
-local veh = GetVehiclePedIsIn(PlayerPedId(), false)
-local fuel = exports.rs_bridge:GetFuel(veh)
-exports.rs_bridge:SetFuel(veh, 100.0)
-```
-
-### Target
-
-```lua
-exports.rs_bridge:AddTargetEntity(entity, {
-    {
-        label = 'Talk',
-        icon = 'fa-solid fa-comment',
-        action = function()
-            print('talking')
-        end
-    }
-})
-```
-
-## Locale API
-
-Each resource can load its own locale files:
-
-```lua
-exports.rs_bridge:LoadLocales(GetCurrentResourceName())
-```
-
-Then use:
-
-```lua
-local text = exports.rs_bridge:_L('my_resource.some_key')
-```
-
-Resource locale file example:
-
-```lua
--- locales/en.lua
-return {
-    some_key = 'Hello world',
-    found_items = 'You found %d items.'
-}
-```
-
-Formatted usage:
-
-```lua
-exports.rs_bridge:_L('my_resource.found_items', 3)
-```
-
-## Recommended pattern for all Reality Sucks RP resources
-
-Do this:
-
-```lua
-exports.rs_bridge:GetPlayer(source)
-exports.rs_bridge:AddItem(source, item, amount, metadata)
-exports.rs_bridge:Notify(source, 'Done.', 'success')
-```
-
-Avoid direct framework calls inside your normal resources:
-
-```lua
-exports['qb-core']:GetCoreObject()
-exports.qbx_core:GetPlayer(source)
-ESX.GetPlayerFromId(source)
-```
-
-Keep those inside the bridge.
-
-## Important note
-
-This bridge is defensive and fail-soft. Some third-party inventories and fuel scripts use different export names depending on version. The bridge tries common exports first and falls back when possible. Community testing may require small adapter patches for specific versions.
-
-## Banking and cash providers (v2.2.2)
-
-Physical cash and bank money are separate providers.
-
-- `RSBridgeConfig.Cash.Provider = 'inventory_item'` routes physical cash through the configured inventory item. With Qbox and ox_inventory, RealitySucksRP uses the synchronized `money` item (the Qbox account is still named `cash`).
-- `RSBridgeConfig.Cash.Provider = 'framework'` supports servers whose framework owns physical cash.
-- `RSBridgeConfig.Banking.Provider = 'auto'` prefers `rs-banking` when it is started and otherwise falls back to framework bank money.
-
-Banking server exports: `GetCashProvider`, `GetCash`, `CanReceiveCash`, `AddCash`, `RemoveCash`, `GetBankingProvider`, `GetBankBalance`, `AddBankMoney`, `RemoveBankMoney`, `ChargePlayer`, and `CreditPlayer`.
-
-`client/core.lua`, `client/uiguard.lua`, and `server/core.lua` are explicitly packaged for resources using `@rs_bridge/...` compatibility includes.
-
-## Complete FiveM Servers For Sale
-
-I love making scripts and running wild in GTA, but I also enjoy building complete servers. I use tested RealitySucksRP systems and configure the build around the owner's gameplay, framework, economy, theme and direction.
-
-- **QBCore Shell — $500**
-- **Zombie Server — $700**
-- **Full RP Server — $850**
-- **30 days of Discord setup/support included**
-
-**Website:** https://realitysucksrp.github.io/
-
-**Tebex:** https://reality-sucks-rp-webstore.tebex.io/
-
-**Discord:** https://discord.gg/e9V3rPHySx
-
-## License
-
-MIT License. See `LICENSE` for the full terms.
+For a fresh public installation, start from the shipped auto defaults and override only what the server actually needs.

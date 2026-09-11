@@ -105,6 +105,10 @@ AddEventHandler('onResourceStart', function(resource)
     if resource == 'ox_inventory' then cachedItems = nil end
 end)
 
+AddEventHandler('onResourceStop', function(resource)
+    if resource == 'ox_inventory' then cachedItems = nil end
+end)
+
 exports('GetItems', GetItems)
 exports('GetItemDefinition', GetItemDefinition)
 exports('DoesItemExist', DoesItemExist)

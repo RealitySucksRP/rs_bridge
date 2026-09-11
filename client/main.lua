@@ -394,3 +394,13 @@ CreateThread(function()
 
     RSBridge.debug('QBCore:Notify forwarder active (no framework owns the event)')
 end)
+
+
+RegisterCommand('rsbridgeclient', function()
+    local target = type(GetTargetProvider) == 'function' and GetTargetProvider() or 'unknown'
+    local progress = type(GetProgressProvider) == 'function' and GetProgressProvider() or 'unknown'
+    local minigame = type(GetMinigameProvider) == 'function' and GetMinigameProvider() or 'unknown'
+    local hud = type(GetHudProvider) == 'function' and GetHudProvider() or 'unknown'
+    print(('[rs_bridge] CLIENT CHECK framework=%s target=%s progress=%s minigame=%s hud=%s')
+        :format(tostring(RSBridge.Framework), tostring(target), tostring(progress), tostring(minigame), tostring(hud)))
+end, false)
