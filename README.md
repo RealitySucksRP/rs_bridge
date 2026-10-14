@@ -1,3 +1,11 @@
+<!-- RS community links -->
+
+Free universal FiveM framework/provider bridge for Qbox, QBCore, ESX and Standalone. Money, inventory, callbacks, progress, targets, fuel, keys and medical integration.
+
+[Get RS Bridge free](https://reality-sucks-rp-webstore.tebex.io/package/7628375) | [Website](https://realitysucksrp.github.io/) | [Tebex Store](https://reality-sucks-rp-webstore.tebex.io/) | [Free Scripts](https://reality-sucks-rp-webstore.tebex.io/category/free-scripts) | [Discord](https://discord.gg/e9V3rPHySx) | [YouTube](https://www.youtube.com/@RealitySucksRP)
+
+<!-- /RS community links -->
+
 <p align="center">
   <img src="rs_bridge.png" alt="RS Bridge" width="900">
 </p>
